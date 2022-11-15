@@ -51,22 +51,26 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
+		w.WriteHeader(400)
 		w.Write([]byte("Cant convert limit to int"))
 		return
 	}
 	offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
 	if err != nil {
+		w.WriteHeader(400)
 		w.Write([]byte("Cant convert offset to int"))
 		return
 	}
 	query := r.URL.Query().Get("query")
 	orderField := r.URL.Query().Get("order_field")
 	if orderField != "Id" && orderField != "Age" && orderField != "Name" {
+		w.WriteHeader(400)
 		w.Write([]byte("You can sort clients by Id, Age, Name"))
 		return
 	}
 	orderBy, err := strconv.Atoi(r.URL.Query().Get("order_by"))
 	if err != nil {
+		w.WriteHeader(400)
 		w.Write([]byte("Cant convert orderBy to int"))
 		return
 	}
