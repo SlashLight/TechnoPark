@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4153d67e-4beb-40c7-ae22-912c2e2b966a" name="Changes" comment="">
+    <list default="true" id="4153d67e-4beb-40c7-ae22-912c2e2b966a" name="Changes" comment="Started adding tests">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/client_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/client_test.go" afterDir="false" />
     </list>
@@ -80,6 +80,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Started adding tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="Started adding tests" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

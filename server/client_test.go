@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -9,7 +10,7 @@ type TestCase struct {
 	TestRequest *SearchRequest
 	Result 		*SearchResponse
 	StatusCode 	int
-	IsError bool
+	Error error
 }
 
 func TestSearchingClients(t *testing.T) {
@@ -28,7 +29,7 @@ func TestSearchingClients(t *testing.T) {
 			},
 			Result: nil,
 			StatusCode: 0,
-			IsError: true,
+			Error: fmt.Errorf("limit must be > 0"),
 ,		},
 		{
 			TestClient: &SearchClient {
