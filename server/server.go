@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"log"
+	"io"
 	"net/http"
 	"os"
 	"sort"
@@ -26,18 +26,18 @@ type Clients struct {
 	List []Client `xml:"row"`
 }
 
+var token = map[string]interface{}{
+	"good": nil,
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	clients := new(Clients)
-	_, err := w.Write([]byte("Hello User"))
-	if err != nil {
-		log.Printf("%v", err)
-		return
-	}
 	file, err := os.Open("dataset.xml")
 	if err != nil {
-		fmt.Println("Cant open dataset")
+		io.WriteString(w, `"Error": "Cant open dataset"`)
 		return
 	}
+	defer file.Close()
 
 	var data []byte
 	scanner := bufio.NewScanner(file)
@@ -46,37 +46,45 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	err = xml.Unmarshal(data, &clients)
 	if err != nil {
-		w.Write([]byte("Error at converting XML to bytes"))
+		io.WriteString(w, `"Error": "Error at converting XML to bytes"`)
+		return
+	}
+
+	access := r.Header.Get("AccessToken")
+	if _, ok := token[access]; !ok {
+		w.WriteHeader(401)
+		io.WriteString(w, `"Error": "Unauthorized user"`)
+		return
 	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
 		w.WriteHeader(400)
-		w.Write([]byte("Cant convert limit to int"))
+		io.WriteString(w, `"Error": "Cant convert limit to int"`)
 		return
 	}
 	offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
 	if err != nil {
 		w.WriteHeader(400)
-		w.Write([]byte("Cant convert offset to int"))
+		io.WriteString(w, `"Error": "Cant convert offset to int"`)
 		return
 	}
 	query := r.URL.Query().Get("query")
 	orderField := r.URL.Query().Get("order_field")
 	if orderField != "Id" && orderField != "Age" && orderField != "Name" {
 		w.WriteHeader(400)
-		w.Write([]byte("You can sort clients by Id, Age, Name"))
+		io.WriteString(w, `"Error": "OrderField invalid"`)
 		return
 	}
 	orderBy, err := strconv.Atoi(r.URL.Query().Get("order_by"))
 	if err != nil {
 		w.WriteHeader(400)
-		w.Write([]byte("Cant convert orderBy to int"))
+		io.WriteString(w, `"Error": "Cant convert orderBy to int"`)
 		return
 	}
 	if orderBy < -1 || orderBy > 1 {
 		w.WriteHeader(400)
-		w.Write([]byte("OrderBy should be 1, 0 or -1"))
+		io.WriteString(w, `"Error": "OrderBy should be 1, 0 or -1"`)
 		return
 	}
 
@@ -117,14 +125,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	result, err := json.Marshal(queryClients.List[offset:])
 	if err != nil {
-		fmt.Println("Cant convert result to Json")
+		io.WriteString(w, `"Error": "Cant convert result to Json"`)
 		return
 	}
-	_, err = w.Write([]byte(result))
-	if err != nil {
-		log.Printf("%v", err)
-		return
-	}
+	w.Write(result)
 
 }
 
