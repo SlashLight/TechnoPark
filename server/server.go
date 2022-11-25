@@ -26,6 +26,10 @@ type Clients struct {
 	List []Client `xml:"row"`
 }
 
+type Response struct {
+	List []User
+}
+
 var token = map[string]interface{}{
 	"good": nil,
 }
@@ -88,14 +92,29 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	queryClients := new(Clients)
+	queryClients := new(Response)
 	if query == "" {
-		queryClients.List = clients.List[:limit]
+		for _, client := range clients.List {
+			user := User{
+				ID:     client.Id,
+				Name:   client.FirstName + " " + client.LastName,
+				Age:    client.Age,
+				About:  client.About,
+				Gender: client.Gender,
+			}
+			queryClients.List = append(queryClients.List, user)
+		}
 	} else {
 		for _, client := range clients.List {
-			name := client.FirstName + " " + client.LastName
-			if strings.Contains(name, query) || strings.Contains(client.About, query) {
-				queryClients.List = append(queryClients.List, client)
+			user := User{
+				ID:     client.Id,
+				Name:   client.FirstName + " " + client.LastName,
+				Age:    client.Age,
+				About:  client.About,
+				Gender: client.Gender,
+			}
+			if strings.Contains(user.Name, query) || strings.Contains(user.About, query) {
+				queryClients.List = append(queryClients.List, user)
 			}
 			if len(queryClients.List) == limit {
 				break
@@ -107,7 +126,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		switch orderField {
 		case "Id":
 			sort.Slice(queryClients.List, func(i, j int) bool {
-				return (orderBy * queryClients.List[i].Id) < (orderBy * queryClients.List[j].Id)
+				return (orderBy * queryClients.List[i].ID) < (orderBy * queryClients.List[j].ID)
 			})
 		case "Age":
 			sort.Slice(queryClients.List, func(i, j int) bool {
@@ -116,9 +135,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		case "Name":
 			sort.Slice(queryClients.List, func(i, j int) bool {
 				if orderBy == 1 {
-					return (queryClients.List[i].FirstName + " " + queryClients.List[i].LastName) < (queryClients.List[j].FirstName + " " + queryClients.List[j].LastName)
+					return (queryClients.List[i].Name) < (queryClients.List[j].Name)
 				} else {
-					return (queryClients.List[i].FirstName + " " + queryClients.List[i].LastName) > (queryClients.List[j].FirstName + " " + queryClients.List[j].LastName)
+					return (queryClients.List[i].Name) > (queryClients.List[j].Name)
 				}
 			})
 		}
