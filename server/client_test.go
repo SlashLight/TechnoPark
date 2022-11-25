@@ -85,6 +85,27 @@ func TestSearchingClients(t *testing.T) {
 		},
 		{
 			TestClient: SearchClient{
+				AccessToken: "good",
+				URL:         ts.URL,
+			},
+			TestRequest: SearchRequest{
+				Limit:      1,
+				Offset:     1,
+				Query:      "a",
+				OrderField: "Name",
+				OrderBy:    1,
+			},
+			Result: &SearchResponse{
+				Users: []User{
+					{ID: 1, Name: "Hilda Mayer", Age: 21, About: "Sit commodo consectetur minim amet ex. Elit aute mollit fugiat labore sint ipsum dolor cupidatat qui reprehenderit. Eu nisi in exercitation culpa sint aliqua nulla nulla proident eu. Nisi reprehenderit anim cupidatat dolor incididunt laboris mollit magna commodo ex. Cupidatat sit id aliqua amet nisi et voluptate voluptate commodo ex eiusmod et nulla velit.", Gender: "female"},
+				},
+				NextPage: false,
+			},
+			StatusCode: 200,
+			Error:      nil,
+		},
+		{
+			TestClient: SearchClient{
 				AccessToken: "Bad",
 				URL:         ts.URL,
 			},
@@ -100,6 +121,7 @@ func TestSearchingClients(t *testing.T) {
 			Error:      fmt.Errorf("bad AccessToken"),
 		},
 	}
+	//fmt.Println(cases[4].Result)
 	for caseNum, item := range cases {
 		tClient := item.TestClient
 		tReq := item.TestRequest

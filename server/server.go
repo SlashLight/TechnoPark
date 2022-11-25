@@ -93,7 +93,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		queryClients.List = clients.List[:limit]
 	} else {
 		for _, client := range clients.List {
-			name := client.FirstName + client.LastName
+			name := client.FirstName + " " + client.LastName
 			if strings.Contains(name, query) || strings.Contains(client.About, query) {
 				queryClients.List = append(queryClients.List, client)
 			}
@@ -116,9 +116,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		case "Name":
 			sort.Slice(queryClients.List, func(i, j int) bool {
 				if orderBy == 1 {
-					return (queryClients.List[i].FirstName + queryClients.List[i].LastName) < (queryClients.List[j].FirstName + queryClients.List[j].LastName)
+					return (queryClients.List[i].FirstName + " " + queryClients.List[i].LastName) < (queryClients.List[j].FirstName + " " + queryClients.List[j].LastName)
 				} else {
-					return (queryClients.List[i].FirstName + queryClients.List[i].LastName) > (queryClients.List[j].FirstName + queryClients.List[j].LastName)
+					return (queryClients.List[i].FirstName + " " + queryClients.List[i].LastName) > (queryClients.List[j].FirstName + " " + queryClients.List[j].LastName)
 				}
 			})
 		}
