@@ -1,3 +1,3 @@
-module server
+module mod
 
 go 1.18
