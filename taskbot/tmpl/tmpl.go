@@ -1,9 +1,16 @@
 package main
 
-import "text/template"
+import (
+	"bytes"
+	"text/template"
+)
 
 func inc(a int) int {
 	return a + 1
+}
+
+func Execution(writer bytes.Buffer, pull *Pull) error {
+	return TempShow.Execute(&writer, pull)
 }
 
 const (
@@ -11,5 +18,5 @@ const (
 )
 
 var (
-	tempShow, _ = template.New("Showing").Funcs(template.FuncMap{"inc": inc}).Parse(SHOWTASKS)
+	TempShow, _ = template.New("Showing").Funcs(template.FuncMap{"inc": inc}).Parse(SHOWTASKS)
 )

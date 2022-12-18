@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"text/template"
 )
 
 type User struct {
@@ -26,9 +27,15 @@ type Pull struct {
 	Tasks []Task
 }
 
+func inc(a int) int {
+	return a + 1
+}
+
 func showTasks(pull *Pull, chatId int64, bot *tgbotapi.BotAPI) error {
+	TempShow, _ := template.New("Showing").Funcs(template.FuncMap{"inc": inc}).Parse(`{{range $index, &task:=.}} {{$id:=inc $index}} {{$id}}. {{$item.Content}} by {{$item.Author}}\n {{if $item.Executor == nil}} /assign_{{$id}} {{if else $item.Executor == $item.Author}} assigner: я\n /unassign_$id, /resolve_$id \n \n {{else}} assigner: $item.Author.ID {{end}} {{end}}`)
+
 	var tpl bytes.Buffer
-	err := tempShow.Execute(&tpl, pull)
+	err := TempShow.Execute(&tpl, pull)
 	if err != nil {
 		return err
 	}
@@ -81,7 +88,16 @@ func startTaskBot(ctx context.Context) error {
 	}()
 	fmt.Println("start listen :" + port)
 
-	pull := new(Pull)
+	//pull := new(Pull)
+	pull := Pull{
+		Tasks: []Task{
+			{
+				Content:  "Сделать текучку",
+				Author:   &User{ID: "@SlashLight"},
+				Executor: nil,
+			},
+		},
+	}
 
 	for update := range updates {
 		log.Printf("upd: %#v\n", update)
@@ -95,7 +111,7 @@ func startTaskBot(ctx context.Context) error {
 					"Список задач пуст",
 				))
 			} else {
-				err := showTasks(pull, update.Message.Chat.ID, bot)
+				err := showTasks(&pull, update.Message.Chat.ID, bot)
 				if err != nil {
 					bot.Send(tgbotapi.NewMessage(
 						update.Message.Chat.ID,
