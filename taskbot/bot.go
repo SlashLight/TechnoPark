@@ -4,9 +4,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	tgbotapi "github.com/skinass/telegram-bot-api/v5"
 	"log"
 	"net/http"
+	"os"
 )
 
 var (
@@ -14,7 +16,7 @@ var (
 	BotToken = "5827575728:AAGzyCtfF98NhB8cr700536evIF6rW27tyM"
 
 	// урл выдаст вам нгрок или хероку
-	WebhookURL = "https://acf3-195-19-48-91.eu.ngrok.io"
+	WebhookURL = "https://2a19-178-217-27-186.eu.ngrok.io"
 )
 
 func startTaskBot(ctx context.Context) error {
@@ -40,6 +42,28 @@ func startTaskBot(ctx context.Context) error {
 	http.HandleFunc("/state", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("all is working"))
 	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	go func() {
+		log.Fatalln("http err:", http.ListenAndServe(":"+port, nil))
+	}()
+	fmt.Println("start listen :" + port)
+
+	for update := range updates {
+		log.Printf("upd: %#v\n", update)
+		command := update.Message.Text
+		switch command {
+		case "/hui":
+			bot.Send(tgbotapi.NewMessage(
+				update.Message.Chat.ID,
+				"Пошёл нахуй",
+			))
+
+		}
+	}
 
 	return nil
 }
