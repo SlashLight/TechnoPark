@@ -3,56 +3,20 @@ package main
 // сюда писать код
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	tgbotapi "github.com/skinass/telegram-bot-api/v5"
 	"log"
 	"net/http"
 	"os"
-	"text/template"
 )
-
-type User struct {
-	ID string
-}
-
-type Task struct {
-	Content  string
-	Author   *User
-	Executor *User
-}
-
-type Pull struct {
-	Tasks []Task
-}
-
-func inc(a int) int {
-	return a + 1
-}
-
-func showTasks(pull *Pull, chatId int64, bot *tgbotapi.BotAPI) error {
-	TempShow, _ := template.New("Showing").Funcs(template.FuncMap{"inc": inc}).Parse(`{{range $index, &task:=.}} {{$id:=inc $index}} {{$id}}. {{$item.Content}} by {{$item.Author}}\n {{if $item.Executor == nil}} /assign_{{$id}} {{if else $item.Executor == $item.Author}} assigner: я\n /unassign_$id, /resolve_$id \n \n {{else}} assigner: $item.Author.ID {{end}} {{end}}`)
-
-	var tpl bytes.Buffer
-	err := TempShow.Execute(&tpl, pull)
-	if err != nil {
-		return err
-	}
-
-	bot.Send(tgbotapi.NewMessage(
-		chatId,
-		tpl.String(),
-	))
-	return nil
-}
 
 var (
 	// @BotFather в телеграме даст вам это
 	BotToken = "5827575728:AAGzyCtfF98NhB8cr700536evIF6rW27tyM"
 
 	// урл выдаст вам нгрок или хероку
-	WebhookURL = "https://800d-178-217-27-186.eu.ngrok.io"
+	WebhookURL = "https://8c13-178-217-27-193.eu.ngrok.io"
 )
 
 func startTaskBot(ctx context.Context) error {
@@ -92,9 +56,22 @@ func startTaskBot(ctx context.Context) error {
 	pull := Pull{
 		Tasks: []Task{
 			{
-				Content:  "Сделать текучку",
-				Author:   &User{ID: "@SlashLight"},
-				Executor: nil,
+				Content:          "Сделать текучку",
+				Author:           User{ID: "@SlashLight"},
+				Executor:         &User{ID: "@SlashLight"},
+				NotBeingExecuted: false,
+			},
+			{
+				Content:          "Забить на всё хуй",
+				Author:           User{ID: "@VasyaPupkin"},
+				Executor:         nil,
+				NotBeingExecuted: true,
+			},
+			{
+				Content:          "Допилить бота",
+				Author:           User{ID: "@EbuchiyTechnoPark"},
+				Executor:         &User{ID: "@SlashLight"},
+				NotBeingExecuted: false,
 			},
 		},
 	}
@@ -111,7 +88,7 @@ func startTaskBot(ctx context.Context) error {
 					"Список задач пуст",
 				))
 			} else {
-				err := showTasks(&pull, update.Message.Chat.ID, bot)
+				err := showTasks(pull, update.Message.Chat.ID, bot)
 				if err != nil {
 					bot.Send(tgbotapi.NewMessage(
 						update.Message.Chat.ID,
