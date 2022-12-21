@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c2c6b321-6e33-4f32-945a-e80223170ed0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/taskbot/tmpl/Types.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taskbot/tmpl/handlers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/taskbot/tmpl/Templates" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/taskbot/bot.go" beforeDir="false" afterPath="$PROJECT_DIR$/taskbot/bot.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/taskbot/tmpl/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/taskbot/tmpl/handlers.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/taskbot/tmpl/tmpl.go" beforeDir="false" afterPath="$PROJECT_DIR$/taskbot/tmpl/tmpl.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

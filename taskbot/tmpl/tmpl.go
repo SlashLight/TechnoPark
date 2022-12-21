@@ -1,7 +1,6 @@
 package tmpl
 
 import (
-	"bytes"
 	"text/template"
 )
 
@@ -21,5 +20,5 @@ const (
 )
 
 var (
-	TempShow, _ := template.New("Showing").Funcs(template.FuncMap{"inc": inc, "deref": deref, "comp": comp}).Parse(SHOWTASKS)
+	TempShow, _ = template.New("Showing").Funcs(template.FuncMap{"inc": inc, "deref": deref}).Parse(SHOWTASKS)
 )

@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	tgbotapi "github.com/skinass/telegram-bot-api/v5"
+	handlers "gitlab.com/mailru-go/lectures-2022-1/04_net2/99_hw/taskbot/tmpl"
 	"log"
 	"net/http"
 	"os"
@@ -52,29 +53,7 @@ func startTaskBot(ctx context.Context) error {
 	}()
 	fmt.Println("start listen :" + port)
 
-	//pull := new(Pull)
-	pull := Pull{
-		Tasks: []Task{
-			{
-				Content:          "Сделать текучку",
-				Author:           User{ID: "@SlashLight"},
-				Executor:         &User{ID: "@SlashLight"},
-				NotBeingExecuted: false,
-			},
-			{
-				Content:          "Забить на всё хуй",
-				Author:           User{ID: "@VasyaPupkin"},
-				Executor:         nil,
-				NotBeingExecuted: true,
-			},
-			{
-				Content:          "Допилить бота",
-				Author:           User{ID: "@EbuchiyTechnoPark"},
-				Executor:         &User{ID: "@SlashLight"},
-				NotBeingExecuted: false,
-			},
-		},
-	}
+	pull := new(handlers.Pull)
 
 	for update := range updates {
 		log.Printf("upd: %#v\n", update)

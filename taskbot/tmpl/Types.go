@@ -5,10 +5,9 @@ type User struct {
 }
 
 type Task struct {
-	Content          string
-	Author           User
-	Executor         *User
-	NotBeingExecuted bool
+	Content  string
+	Author   User
+	Executor *User
 }
 
 type Pull struct {

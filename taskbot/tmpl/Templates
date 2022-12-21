@@ -1,0 +1,11 @@
+{{range $index, $task:=.}}
+    {{$id:=inc $index}}{{$Executor:=deref $task.Executor}} {{$id}}. {{$task.Content}} by {{$task.Author.ID}}\n
+    {{if $task.NotBeingExecuted}}
+        /assign_{{$id}}\n\n
+    {{else}}{{if eq $Executor.ID $task.Author.ID}}
+        assigner: я\n
+        /unassign_{{$id}}, /resolve_{{$id}}\n\n
+    {{else}}
+        assigner: {{$Executor.ID}}\n\n
+
+    {{end}}{{end}}{{end}}
