@@ -17,7 +17,7 @@ var (
 	BotToken = "5827575728:AAGzyCtfF98NhB8cr700536evIF6rW27tyM"
 
 	// урл выдаст вам нгрок или хероку
-	WebhookURL = "https://8c13-178-217-27-193.eu.ngrok.io"
+	WebhookURL = "https://b34e-178-217-27-225.eu.ngrok.io"
 )
 
 func startTaskBot(ctx context.Context) error {
@@ -53,7 +53,15 @@ func startTaskBot(ctx context.Context) error {
 	}()
 	fmt.Println("start listen :" + port)
 
-	pull := new(handlers.Pull)
+	//pull := new(handlers.Pull)
+	pull := handlers.Pull{Tasks: []handlers.Task{
+		{
+			Content:  "хахах",
+			Author:   handlers.User{ID: "@SlashLight"},
+			Executor: &handlers.User{ID: "@SlashLight"},
+		},
+	},
+	}
 
 	for update := range updates {
 		log.Printf("upd: %#v\n", update)
@@ -67,7 +75,7 @@ func startTaskBot(ctx context.Context) error {
 					"Список задач пуст",
 				))
 			} else {
-				err := showTasks(pull, update.Message.Chat.ID, bot)
+				err := handlers.ShowTasks(&pull, update.Message.Chat.ID, bot)
 				if err != nil {
 					bot.Send(tgbotapi.NewMessage(
 						update.Message.Chat.ID,

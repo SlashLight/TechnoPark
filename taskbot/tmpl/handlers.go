@@ -5,7 +5,7 @@ import (
 	tgbotapi "github.com/skinass/telegram-bot-api/v5"
 )
 
-func showTasks(pull Pull, chatId int64, bot *tgbotapi.BotAPI) error {
+func ShowTasks(pull *Pull, chatId int64, bot *tgbotapi.BotAPI) error {
 	if len(pull.Tasks) == 0 {
 		_, err := bot.Send(tgbotapi.NewMessage(
 			chatId,
