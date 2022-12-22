@@ -17,7 +17,7 @@ var (
 	BotToken = "5827575728:AAGzyCtfF98NhB8cr700536evIF6rW27tyM"
 
 	// урл выдаст вам нгрок или хероку
-	WebhookURL = "https://b34e-178-217-27-225.eu.ngrok.io"
+	WebhookURL = "https://ae3c-178-217-27-224.eu.ngrok.io"
 )
 
 func startTaskBot(ctx context.Context) error {
@@ -75,11 +75,11 @@ func startTaskBot(ctx context.Context) error {
 					"Список задач пуст",
 				))
 			} else {
-				err := handlers.ShowTasks(&pull, update.Message.Chat.ID, bot)
+				err := handlers.ShowTasks(&pull, update.Message.Chat.ID, update.Message.From.UserName, bot)
 				if err != nil {
 					bot.Send(tgbotapi.NewMessage(
 						update.Message.Chat.ID,
-						"Failed at showing tasks",
+						fmt.Sprintf("Failed at showing tasks: %v", err),
 					))
 				}
 			}
