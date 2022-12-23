@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 var (
@@ -17,7 +18,7 @@ var (
 	BotToken = "5827575728:AAGzyCtfF98NhB8cr700536evIF6rW27tyM"
 
 	// урл выдаст вам нгрок или хероку
-	WebhookURL = "https://ae3c-178-217-27-224.eu.ngrok.io"
+	WebhookURL = "https://fc79-195-19-61-105.eu.ngrok.io"
 )
 
 func startTaskBot(ctx context.Context) error {
@@ -53,40 +54,66 @@ func startTaskBot(ctx context.Context) error {
 	}()
 	fmt.Println("start listen :" + port)
 
-	//pull := new(handlers.Pull)
-	pull := handlers.Pull{Tasks: []handlers.Task{
-		{
-			Content:  "хахах",
-			Author:   handlers.User{ID: "@SlashLight"},
-			Executor: &handlers.User{ID: "@SlashLight"},
-		},
-	},
-	}
+	pull := new(handlers.Pull)
 
 	for update := range updates {
 		log.Printf("upd: %#v\n", update)
-		command := update.Message.Text
+		text := strings.Split(update.Message.Text, " ")
+		command := strings.Split(text[0], "_")
 
-		switch command {
+		switch command[0] {
 		case "/tasks":
-			if len(pull.Tasks) == 0 {
+			err := handlers.ShowTasks(pull, &update, bot)
+			if err != nil {
+				log.Printf("Error at showing tasks: %v", err)
 				bot.Send(tgbotapi.NewMessage(
 					update.Message.Chat.ID,
-					"Список задач пуст",
+					"Не удалось показать задачи",
 				))
-			} else {
-				err := handlers.ShowTasks(&pull, update.Message.Chat.ID, update.Message.From.UserName, bot)
+			}
+		case "/new":
+			err := handlers.CreateNewTask(pull, &update, bot, strings.Join(text[1:], " "))
+			if err != nil {
+				log.Printf("Error at creating tasks: %v", err)
+				bot.Send(tgbotapi.NewMessage(
+					update.Message.Chat.ID,
+					"Не удалось создать задачу",
+				))
+			}
+		case "/assign":
+			err := handlers.AssignTask(pull, &update, bot, command)
+			if err != nil {
+				log.Printf("Error at assigning tasks: %v", err)
+				bot.Send(tgbotapi.NewMessage(
+					update.Message.Chat.ID,
+					"Не удалось назначить задачу",
+				))
+			}
+		case "/unassign":
+			err := handlers.UnassignTask(pull, &update, bot, command)
+			if err != nil {
+				log.Printf("Error at unassigning task: %v", err)
+				bot.Send(tgbotapi.NewMessage(
+					update.Message.Chat.ID,
+					"Не удалось снять задачу",
+				))
+			}
+		case "/resolve":
+			{
+				err := handlers.ResolveTask(pull, &update, bot, command)
 				if err != nil {
+					log.Printf("Error at resolving task: %v", err)
 					bot.Send(tgbotapi.NewMessage(
 						update.Message.Chat.ID,
-						fmt.Sprintf("Failed at showing tasks: %v", err),
+						"Не удалось выполнить задачу",
 					))
 				}
 			}
+
 		default:
 			bot.Send(tgbotapi.NewMessage(
 				update.Message.Chat.ID,
-				"Иди поспи",
+				"Неопознанная команда",
 			))
 		}
 	}

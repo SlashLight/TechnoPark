@@ -1,7 +1,8 @@
 package tmpl
 
 type User struct {
-	ID string
+	ID     string
+	ChatID int64
 }
 
 type Task struct {
