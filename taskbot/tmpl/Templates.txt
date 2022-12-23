@@ -1,11 +1,8 @@
 {{range $index, $task:=.}}
     {{$id:=inc $index}}{{$Executor:=deref $task.Executor}}{{$id}}. {{$task.Content}} by {{$task.Author.ID}}
 {{if isActive $task}}/assign_{{$id}}
-
 {{else}}{{if isMe $Executor.ID}} assigner: я
 /unassign_{{$id}}, /resolve_{{$id}}
-
 {{else}} assigner: {{$Executor.ID}}
-
     {{end}}{{end}}
 {{end}}

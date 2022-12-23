@@ -116,10 +116,10 @@ func AssignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comma
 		return nil
 	}
 
-	if pull.Tasks[id-1].Executor != nil {
+	if pull.Tasks[id-1].Executor != nil && pull.Tasks[id-1].Executor.ChatID == chatId {
 		_, err = bot.Send(tgbotapi.NewMessage(
-			chatId,
-			fmt.Sprintf("Задача \"%v\" уже назначена на %s", pull.Tasks[id-1].Content, pull.Tasks[id-1].Executor.ID),
+			pull.Tasks[id-1].Executor.ChatID,
+			"Эта задача уже назначена на вас",
 		))
 		if err != nil {
 			return err
@@ -128,20 +128,30 @@ func AssignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comma
 		return nil
 	}
 
+	if pull.Tasks[id-1].Executor != nil && pull.Tasks[id-1].Executor.ChatID == pull.Tasks[id-1].Author.ChatID {
+		_, err = bot.Send(tgbotapi.NewMessage(
+			pull.Tasks[id-1].Executor.ChatID,
+			fmt.Sprintf("Задача \"%v\" назначена на %v", pull.Tasks[id-1].Content, sender),
+		))
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err = bot.Send(tgbotapi.NewMessage(
+			pull.Tasks[id-1].Author.ChatID,
+			fmt.Sprintf("Задача \"%v\" назначена на %v", pull.Tasks[id-1].Content, sender),
+		))
+		if err != nil {
+			return err
+		}
+	}
+
 	user := &User{ID: sender, ChatID: chatId}
 	pull.Tasks[id-1].Executor = user
 
 	_, err = bot.Send(tgbotapi.NewMessage(
 		chatId,
 		fmt.Sprintf("Задача \"%v\" назначена на вас", pull.Tasks[id-1].Content),
-	))
-	if err != nil {
-		return err
-	}
-
-	_, err = bot.Send(tgbotapi.NewMessage(
-		pull.Tasks[id-1].Author.ChatID,
-		fmt.Sprintf("Задача \"%v\" назначена на %v", pull.Tasks[id-1].Content, sender),
 	))
 	if err != nil {
 		return err
@@ -293,6 +303,8 @@ func ResolveTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comm
 	if err != nil {
 		return err
 	}
+
+	pull.Tasks = append(pull.Tasks[:id-1], pull.Tasks[id:]...)
 
 	return nil
 

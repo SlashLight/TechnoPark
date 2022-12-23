@@ -18,7 +18,7 @@ var (
 	BotToken = "5827575728:AAGzyCtfF98NhB8cr700536evIF6rW27tyM"
 
 	// урл выдаст вам нгрок или хероку
-	WebhookURL = "https://fc79-195-19-61-105.eu.ngrok.io"
+	WebhookURL = "https://f9e4-91-193-176-7.eu.ngrok.io"
 )
 
 func startTaskBot(ctx context.Context) error {
