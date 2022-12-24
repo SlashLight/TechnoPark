@@ -8,15 +8,15 @@ import (
 	"text/template"
 )
 
-func ShowTasks(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI) error {
+func ShowTasks(pool *Pool, update *tgbotapi.Update, bot *tgbotapi.BotAPI) error {
 	var (
 		chatId   = update.Message.Chat.ID
 		sender   = update.Message.From.UserName
 		tpl      bytes.Buffer
-		TempShow = template.Must(template.New("templates.txt").Funcs(template.FuncMap{"inc": inc, "deref": deref, "isMe": isMe(sender), "isActive": isActive}).ParseFiles("./tmpl/templates.txt"))
+		TempShow = template.Must(template.New("ShowTasks.txt").Funcs(template.FuncMap{"inc": inc, "deref": deref, "isMe": isMe(sender), "isActive": isActive}).ParseFiles("./tmpl/ShowTasks.txt"))
 	)
 
-	if len(pull.Tasks) == 0 {
+	if len(pool.Tasks) == 0 {
 		_, err := bot.Send(tgbotapi.NewMessage(
 			chatId,
 			"Список задач пуст",
@@ -27,7 +27,7 @@ func ShowTasks(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI) error 
 		return nil
 	}
 
-	err := TempShow.Execute(&tpl, pull.Tasks)
+	err := TempShow.Execute(&tpl, pool.Tasks)
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func ShowTasks(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI) error 
 	return nil
 }
 
-func CreateNewTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, task string) error {
+func CreateNewTask(pool *Pool, update *tgbotapi.Update, bot *tgbotapi.BotAPI, task string) error {
 	var (
 		chatId = update.Message.Chat.ID
 		sender = update.Message.From.UserName
@@ -64,11 +64,11 @@ func CreateNewTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, ta
 		Author:   User{ID: sender, ChatID: chatId},
 		Executor: nil,
 	}
-	pull.Tasks = append(pull.Tasks, NewTask)
+	pool.Tasks = append(pool.Tasks, NewTask)
 
 	_, err := bot.Send(tgbotapi.NewMessage(
 		chatId,
-		fmt.Sprintf("Задача \"%v\" создана, id=%v", task, len(pull.Tasks)),
+		fmt.Sprintf("Задача \"%v\" создана, id=%v", task, len(pool.Tasks)),
 	))
 	if err != nil {
 		return err
@@ -76,7 +76,7 @@ func CreateNewTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, ta
 	return nil
 }
 
-func AssignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, command []string) error {
+func AssignTask(pool *Pool, update *tgbotapi.Update, bot *tgbotapi.BotAPI, command []string) error {
 	var (
 		chatId = update.Message.Chat.ID
 		sender = update.Message.From.UserName
@@ -105,7 +105,7 @@ func AssignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comma
 		return nil
 	}
 
-	if len(pull.Tasks) < id {
+	if len(pool.Tasks) < id {
 		_, err := bot.Send(tgbotapi.NewMessage(
 			chatId,
 			"Вы ввели слишком большой номер. Такой задачи не существует",
@@ -116,9 +116,9 @@ func AssignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comma
 		return nil
 	}
 
-	if pull.Tasks[id-1].Executor != nil && pull.Tasks[id-1].Executor.ChatID == chatId {
+	if pool.Tasks[id-1].Executor != nil && pool.Tasks[id-1].Executor.ChatID == chatId {
 		_, err = bot.Send(tgbotapi.NewMessage(
-			pull.Tasks[id-1].Executor.ChatID,
+			pool.Tasks[id-1].Executor.ChatID,
 			"Эта задача уже назначена на вас",
 		))
 		if err != nil {
@@ -128,18 +128,18 @@ func AssignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comma
 		return nil
 	}
 
-	if pull.Tasks[id-1].Executor != nil && pull.Tasks[id-1].Executor.ChatID == pull.Tasks[id-1].Author.ChatID {
+	if pool.Tasks[id-1].Executor != nil && pool.Tasks[id-1].Executor.ChatID == pool.Tasks[id-1].Author.ChatID {
 		_, err = bot.Send(tgbotapi.NewMessage(
-			pull.Tasks[id-1].Executor.ChatID,
-			fmt.Sprintf("Задача \"%v\" назначена на %v", pull.Tasks[id-1].Content, sender),
+			pool.Tasks[id-1].Executor.ChatID,
+			fmt.Sprintf("Задача \"%v\" назначена на @%v", pool.Tasks[id-1].Content, sender),
 		))
 		if err != nil {
 			return err
 		}
-	} else {
+	} else if chatId != pool.Tasks[id-1].Author.ChatID {
 		_, err = bot.Send(tgbotapi.NewMessage(
-			pull.Tasks[id-1].Author.ChatID,
-			fmt.Sprintf("Задача \"%v\" назначена на %v", pull.Tasks[id-1].Content, sender),
+			pool.Tasks[id-1].Author.ChatID,
+			fmt.Sprintf("Задача \"%v\" назначена на @%v", pool.Tasks[id-1].Content, sender),
 		))
 		if err != nil {
 			return err
@@ -147,11 +147,11 @@ func AssignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comma
 	}
 
 	user := &User{ID: sender, ChatID: chatId}
-	pull.Tasks[id-1].Executor = user
+	pool.Tasks[id-1].Executor = user
 
 	_, err = bot.Send(tgbotapi.NewMessage(
 		chatId,
-		fmt.Sprintf("Задача \"%v\" назначена на вас", pull.Tasks[id-1].Content),
+		fmt.Sprintf("Задача \"%v\" назначена на вас", pool.Tasks[id-1].Content),
 	))
 	if err != nil {
 		return err
@@ -160,7 +160,7 @@ func AssignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comma
 	return nil
 }
 
-func UnassignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, command []string) error {
+func UnassignTask(pool *Pool, update *tgbotapi.Update, bot *tgbotapi.BotAPI, command []string) error {
 	var (
 		chatId = update.Message.Chat.ID
 		sender = update.Message.From.UserName
@@ -189,7 +189,7 @@ func UnassignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, com
 		return nil
 	}
 
-	if len(pull.Tasks) < id {
+	if len(pool.Tasks) < id {
 		_, err := bot.Send(tgbotapi.NewMessage(
 			chatId,
 			"Вы ввели слишком большой номер. Такой задачи не существует",
@@ -200,7 +200,7 @@ func UnassignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, com
 		return nil
 	}
 
-	if pull.Tasks[id-1].Executor.ID != sender {
+	if pool.Tasks[id-1].Executor.ID != sender {
 		_, err = bot.Send(tgbotapi.NewMessage(
 			chatId,
 			"Вы не являетесь исполнителем этой задачи",
@@ -212,7 +212,7 @@ func UnassignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, com
 		return nil
 	}
 
-	pull.Tasks[id-1].Executor = nil
+	pool.Tasks[id-1].Executor = nil
 
 	_, err = bot.Send(tgbotapi.NewMessage(
 		chatId,
@@ -222,19 +222,21 @@ func UnassignTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, com
 		return err
 	}
 
-	_, err = bot.Send(tgbotapi.NewMessage(
-		pull.Tasks[id-1].Author.ChatID,
-		fmt.Sprintf("Задача \"%v\" осталась без исполнителя", pull.Tasks[id-1].Content),
-	))
-	if err != nil {
-		return err
+	if chatId != pool.Tasks[id-1].Author.ChatID {
+		_, err = bot.Send(tgbotapi.NewMessage(
+			pool.Tasks[id-1].Author.ChatID,
+			fmt.Sprintf("Задача \"%v\" осталась без исполнителя", pool.Tasks[id-1].Content),
+		))
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 
 }
 
-func ResolveTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, command []string) error {
+func ResolveTask(pool *Pool, update *tgbotapi.Update, bot *tgbotapi.BotAPI, command []string) error {
 	var (
 		chatId = update.Message.Chat.ID
 		sender = update.Message.From.UserName
@@ -263,7 +265,7 @@ func ResolveTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comm
 		return nil
 	}
 
-	if len(pull.Tasks) < id {
+	if len(pool.Tasks) < id {
 		_, err := bot.Send(tgbotapi.NewMessage(
 			chatId,
 			"Вы ввели слишком большой номер. Такой задачи не существует",
@@ -274,7 +276,7 @@ func ResolveTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comm
 		return nil
 	}
 
-	if pull.Tasks[id-1].Executor.ID != sender {
+	if pool.Tasks[id-1].Executor.ID != sender {
 		_, err = bot.Send(tgbotapi.NewMessage(
 			chatId,
 			"Вы не являетесь исполнителем этой задачи",
@@ -286,26 +288,96 @@ func ResolveTask(pull *Pull, update *tgbotapi.Update, bot *tgbotapi.BotAPI, comm
 		return nil
 	}
 
-	pull.Tasks[id-1].Executor = nil
+	pool.Tasks[id-1].Executor = nil
 
 	_, err = bot.Send(tgbotapi.NewMessage(
 		chatId,
-		fmt.Sprintf("Задача \"%v\" выполнена", pull.Tasks[id-1].Content),
+		fmt.Sprintf("Задача \"%v\" выполнена", pool.Tasks[id-1].Content),
 	))
 	if err != nil {
 		return err
 	}
 
-	_, err = bot.Send(tgbotapi.NewMessage(
-		pull.Tasks[id-1].Author.ChatID,
-		fmt.Sprintf("Задача \"%v\" выполнена %v", pull.Tasks[id-1].Content, sender),
-	))
-	if err != nil {
-		return err
+	if chatId != pool.Tasks[id-1].Author.ChatID {
+		_, err = bot.Send(tgbotapi.NewMessage(
+			pool.Tasks[id-1].Author.ChatID,
+			fmt.Sprintf("Задача \"%v\" выполнена @%v", pool.Tasks[id-1].Content, sender),
+		))
+		if err != nil {
+			return err
+		}
 	}
 
-	pull.Tasks = append(pull.Tasks[:id-1], pull.Tasks[id:]...)
+	pool.Tasks = append(pool.Tasks[:id-1], pool.Tasks[id:]...)
 
 	return nil
 
+}
+
+func MyTasks(pool *Pool, update *tgbotapi.Update, bot *tgbotapi.BotAPI) error {
+	var (
+		chatId   = update.Message.Chat.ID
+		sender   = update.Message.From.UserName
+		tpl      bytes.Buffer
+		TempShow = template.Must(template.New("MyTasks.txt").Funcs(template.FuncMap{"inc": inc, "deref": deref, "isMe": isMe(sender)}).ParseFiles("./tmpl/MyTasks.txt"))
+	)
+
+	err := TempShow.Execute(&tpl, pool.Tasks)
+	if err != nil {
+		return err
+	}
+
+	if len(tpl.String()) == 0 {
+		_, err := bot.Send(tgbotapi.NewMessage(
+			chatId,
+			"Список задач пуст",
+		))
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	_, err = bot.Send(tgbotapi.NewMessage(
+		chatId,
+		tpl.String(),
+	))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func OwnTasks(pool *Pool, update *tgbotapi.Update, bot *tgbotapi.BotAPI) error {
+	var (
+		chatId   = update.Message.Chat.ID
+		sender   = update.Message.From.UserName
+		tpl      bytes.Buffer
+		TempShow = template.Must(template.New("OwnTasks.txt").Funcs(template.FuncMap{"inc": inc, "deref": deref, "isMe": isMe(sender), "isActive": isActive}).ParseFiles("./tmpl/OwnTasks.txt"))
+	)
+
+	err := TempShow.Execute(&tpl, pool.Tasks)
+	if err != nil {
+		return err
+	}
+
+	if len(tpl.String()) == 0 {
+		_, err := bot.Send(tgbotapi.NewMessage(
+			chatId,
+			"Список задач, созданных вами, пуст",
+		))
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	_, err = bot.Send(tgbotapi.NewMessage(
+		chatId,
+		tpl.String(),
+	))
+	if err != nil {
+		return err
+	}
+	return nil
 }

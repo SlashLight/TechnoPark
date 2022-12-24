@@ -1,0 +1,5 @@
+{{range $index, $task:=.}}
+{{$id:=inc $index}}{{$Executor:=deref $task.Executor}}{{if isMe $task.Author.ID}}{{$id}}. {{$task.Content}} by @{{$task.Author.ID}}
+{{if isActive $task}}/assign_{{$id}}{{else}}{{if isMe $Executor.ID}}/unassign_{{$id}}, /resolve_{{$id}}
+{{end}}{{end}}{{end}}
+{{end}}

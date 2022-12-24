@@ -11,6 +11,6 @@ type Task struct {
 	Executor *User
 }
 
-type Pull struct {
+type Pool struct {
 	Tasks []Task
 }

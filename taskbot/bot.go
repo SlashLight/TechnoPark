@@ -54,7 +54,7 @@ func startTaskBot(ctx context.Context) error {
 	}()
 	fmt.Println("start listen :" + port)
 
-	pull := new(handlers.Pull)
+	pool := new(handlers.Pool)
 
 	for update := range updates {
 		log.Printf("upd: %#v\n", update)
@@ -63,7 +63,7 @@ func startTaskBot(ctx context.Context) error {
 
 		switch command[0] {
 		case "/tasks":
-			err := handlers.ShowTasks(pull, &update, bot)
+			err := handlers.ShowTasks(pool, &update, bot)
 			if err != nil {
 				log.Printf("Error at showing tasks: %v", err)
 				bot.Send(tgbotapi.NewMessage(
@@ -72,7 +72,7 @@ func startTaskBot(ctx context.Context) error {
 				))
 			}
 		case "/new":
-			err := handlers.CreateNewTask(pull, &update, bot, strings.Join(text[1:], " "))
+			err := handlers.CreateNewTask(pool, &update, bot, strings.Join(text[1:], " "))
 			if err != nil {
 				log.Printf("Error at creating tasks: %v", err)
 				bot.Send(tgbotapi.NewMessage(
@@ -81,7 +81,7 @@ func startTaskBot(ctx context.Context) error {
 				))
 			}
 		case "/assign":
-			err := handlers.AssignTask(pull, &update, bot, command)
+			err := handlers.AssignTask(pool, &update, bot, command)
 			if err != nil {
 				log.Printf("Error at assigning tasks: %v", err)
 				bot.Send(tgbotapi.NewMessage(
@@ -90,7 +90,7 @@ func startTaskBot(ctx context.Context) error {
 				))
 			}
 		case "/unassign":
-			err := handlers.UnassignTask(pull, &update, bot, command)
+			err := handlers.UnassignTask(pool, &update, bot, command)
 			if err != nil {
 				log.Printf("Error at unassigning task: %v", err)
 				bot.Send(tgbotapi.NewMessage(
@@ -99,15 +99,41 @@ func startTaskBot(ctx context.Context) error {
 				))
 			}
 		case "/resolve":
-			{
-				err := handlers.ResolveTask(pull, &update, bot, command)
-				if err != nil {
-					log.Printf("Error at resolving task: %v", err)
-					bot.Send(tgbotapi.NewMessage(
-						update.Message.Chat.ID,
-						"Не удалось выполнить задачу",
-					))
-				}
+			err := handlers.ResolveTask(pool, &update, bot, command)
+			if err != nil {
+				log.Printf("Error at resolving task: %v", err)
+				bot.Send(tgbotapi.NewMessage(
+					update.Message.Chat.ID,
+					"Не удалось выполнить задачу",
+				))
+			}
+
+		case "/help":
+			fHelp, err := os.ReadFile("./tmpl/Help.txt")
+			if err != nil {
+				log.Printf("Error at opening file: %v", err)
+			}
+			bot.Send(tgbotapi.NewMessage(
+				update.Message.Chat.ID,
+				string(fHelp),
+			))
+		case "/my":
+			err := handlers.MyTasks(pool, &update, bot)
+			if err != nil {
+				log.Printf("Error at showing tasks: %v", err)
+				bot.Send(tgbotapi.NewMessage(
+					update.Message.Chat.ID,
+					"Не удалось показать задачи",
+				))
+			}
+		case "/owner":
+			err := handlers.OwnTasks(pool, &update, bot)
+			if err != nil {
+				log.Printf("Error at showing users's tasks: %v", err)
+				bot.Send(tgbotapi.NewMessage(
+					update.Message.Chat.ID,
+					"Не удалось показать задачи",
+				))
 			}
 
 		default:
