@@ -5,14 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="308c888e-2aa3-44ba-bf1a-4b5ca3a6beb4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/middleware/accesslog.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/middleware/auth.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/middleware/panic.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/session/manager.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/session/session.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/user/repo.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/user/user.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/comment/comment.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/comment/repo.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/item/item.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/item/repo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reddit/redditclone/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reddit/redditclone/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/go.sum" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
