@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="308c888e-2aa3-44ba-bf1a-4b5ca3a6beb4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/comment/comment.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/comment/repo.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/item/item.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/item/repo.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reddit/redditclone/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reddit/redditclone/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/comments/comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/items/comment.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/comments/repo.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/items/item.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/items/item.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/items/repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/items/repo.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +51,11 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Андрей\Documents\GitHub\TechnoPark\reddit\redditclone\pkg\items" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />

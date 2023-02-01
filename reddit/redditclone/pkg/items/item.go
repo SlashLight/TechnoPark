@@ -13,19 +13,19 @@ type Vote struct {
 }
 
 type Item struct {
-	Score            uint16             `bson:"score"`
-	Views            uint16             `bson:"views"`
-	Type             string             `bson:"type"`
-	Title            string             `bson:"title"`
-	Url              string             `bson:"url"`
-	Author           user.User          `bson:"author"`
-	Category         string             `bson:"category"`
-	Text             string             `bson:"text"`
-	Votes            []*Vote            `bson:"votes"`
-	Comments         []*comment.Comment `bson:"comments"`
-	Created          time.Time          `bson:"created"`
-	UpvotePercentage uint16             `bson:"upvotePercentage"`
-	ID               bson.ObjectId      `bson:"ID"`
+	Score            uint16        `bson:"score"`
+	Views            uint16        `bson:"views"`
+	Type             string        `bson:"type"`
+	Title            string        `bson:"title"`
+	Url              string        `bson:"url"`
+	Author           user.User     `bson:"author"`
+	Category         string        `bson:"category"`
+	Text             string        `bson:"text"`
+	Votes            []*Vote       `bson:"votes"`
+	Comments         []*Comment    `bson:"comments"`
+	Created          time.Time     `bson:"created"`
+	UpvotePercentage uint16        `bson:"upvotePercentage"`
+	ID               bson.ObjectId `bson:"ID"`
 }
 
 type ItemRepo interface {
@@ -35,6 +35,9 @@ type ItemRepo interface {
 	GetByAuthor(string) ([]*Item, error)
 	Upvote(bson.ObjectId) (uint16, error)
 	Downvote(bson.ObjectId) (uint16, error)
-	Add(*Item) error
-	Delete(bson.ObjectId) (int64, error)
+	Add(*Item) (uint8, error)
+	Delete(bson.ObjectId) (uint8, error)
+
+	AddComment(bson.ObjectId, *Comment) (uint8, error)
+	DeleteComment(bson.ObjectId, bson.ObjectId) (uint8, error)
 }

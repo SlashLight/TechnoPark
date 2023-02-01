@@ -1,4 +1,4 @@
-package comments
+package items
 
 import (
 	"gopkg.in/mgo.v2/bson"

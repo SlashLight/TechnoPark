@@ -87,7 +87,7 @@ func (repo *ItemMongoRepository) Upvote(id bson.ObjectId) (uint16, error) {
 	} else if err != nil {
 		return 0, err
 	}
-	return 1, nil
+	return post.Score, nil
 }
 
 func (repo *ItemMongoRepository) Downvote(id bson.ObjectId) (uint16, error) {
@@ -108,10 +108,10 @@ func (repo *ItemMongoRepository) Downvote(id bson.ObjectId) (uint16, error) {
 	} else if err != nil {
 		return 0, err
 	}
-	return 1, nil
+	return post.Score, nil
 }
 
-func (repo *ItemMongoRepository) Add(newItem *Item) (int, error) {
+func (repo *ItemMongoRepository) Add(newItem *Item) (uint8, error) {
 	err := repo.Items.Insert(newItem)
 	if err != nil {
 		return 0, err
@@ -119,8 +119,55 @@ func (repo *ItemMongoRepository) Add(newItem *Item) (int, error) {
 	return 1, nil
 }
 
-func (repo *ItemMongoRepository) Delete(id bson.ObjectId) (int, error) {
+func (repo *ItemMongoRepository) Delete(id bson.ObjectId) (uint8, error) {
 	err := repo.Items.Remove(bson.M{"id": id})
+	if err == mgo.ErrNotFound {
+		return 0, nil
+	} else if err != nil {
+		return 0, err
+	}
+	return 1, nil
+}
+
+func (repo *ItemMongoRepository) AddComment(postId bson.ObjectId, comment *Comment) (uint8, error) {
+	post := &Item{}
+	err := repo.Items.Find(bson.M{"id": postId}).One(&post)
+	if err != nil {
+		return 0, err
+	}
+
+	post.Comments = append(post.Comments, comment)
+	err = repo.Items.Update(bson.M{"id": postId}, &post)
+	if err == mgo.ErrNotFound {
+		return 0, nil
+	} else if err != nil {
+		return 0, err
+	}
+	return 1, nil
+}
+
+func (repo *ItemMongoRepository) DeleteComment(postId bson.ObjectId, commentId bson.ObjectId) (uint8, error) {
+	post := &Item{}
+	err := repo.Items.Find(bson.M{"id": postId}).One(&post)
+	if err != nil {
+		return 0, err
+	}
+
+	ind := -1
+	for idx, comment := range post.Comments {
+		if comment.ID == commentId {
+			ind = idx
+			break
+		}
+	}
+
+	if ind == -1 {
+		ErrWrongCom := errors.New("Invalid comment ID")
+		return 0, ErrWrongCom
+	}
+	post.Comments = append(post.Comments[:ind], post.Comments[ind+1:]...)
+
+	err = repo.Items.Update(bson.M{"id": postId}, &post)
 	if err == mgo.ErrNotFound {
 		return 0, nil
 	} else if err != nil {
