@@ -8,4 +8,5 @@ type User struct {
 
 type UserRepo interface {
 	Authorize(login, password string) (*User, error)
+	Register(login, password, confirmation string) (*User, error)
 }

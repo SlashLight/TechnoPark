@@ -12,6 +12,11 @@ type Vote struct {
 	Vote int8
 }
 
+type Author struct {
+	Username string
+	ID       bson.ObjectId
+}
+
 type Item struct {
 	Score            uint16        `bson:"score"`
 	Views            uint16        `bson:"views"`

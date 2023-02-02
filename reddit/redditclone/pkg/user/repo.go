@@ -14,8 +14,10 @@ func NewSqlRepo(db *sql.DB) *UserSqlRepo {
 }
 
 var (
-	ErrNoUser  = errors.New("No user found")
-	ErrBadPass = errors.New("Invalid password")
+	ErrNoUser     = errors.New("No user found")
+	ErrBadPass    = errors.New("Invalid password")
+	ErrUserExists = errors.New("Username already exists")
+	ErrNoMatch    = errors.New("Passwords must match")
 )
 
 func (repo *UserSqlRepo) Authorize(login, password string) (*User, error) {
@@ -29,6 +31,38 @@ func (repo *UserSqlRepo) Authorize(login, password string) (*User, error) {
 	if user.password != password {
 		return nil, ErrBadPass
 	}
-	
+
+	return user, nil
+}
+
+func (repo *UserSqlRepo) Register(login, password, confirmation string) (*User, error) {
+	if password != confirmation {
+		return nil, ErrNoMatch
+	}
+
+	row := repo.DB.QueryRow("SELECT login FROM users WHERE login = ?", login)
+	err := row.Scan()
+	if err != sql.ErrNoRows {
+		return nil, ErrUserExists
+	}
+
+	result, err := repo.DB.Exec("INSERT  INTO users (`login`, `password`) VALUES (?, ?)",
+		login,
+		password,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	lastID, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	user := &User{
+		Id:       uint32(lastID),
+		Login:    login,
+		password: password,
+	}
 	return user, nil
 }

@@ -60,7 +60,7 @@ func (repo *ItemMongoRepository) GetByCategory(categ string) ([]*Item, error) {
 	return items, nil
 }
 
-func (repo *ItemMongoRepository) GetByAuthor(author string) ([]*Item, error) {
+func (repo *ItemMongoRepository) GetByAuthor(authorLogin string) ([]*Item, error) {
 	items := []*Item{}
 	err := repo.Items.Find(bson.M{"author": author}).All(&items)
 	if err != nil {

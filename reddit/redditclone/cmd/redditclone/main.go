@@ -5,7 +5,7 @@ import "github.com/gorilla/mux"
 func main() {
 
 	r := mux.NewRouter()
-	r.HandleFunc("/api/register", userHandler.Register).Methods("POST")
+	r.HandleFunc("/api/register", userHandler.SignUp).Methods("POST")
 	r.HandleFunc("/api/login", userHandler.Login).Methods("POST")
 
 	r.HandleFunc("/api/posts/{category}", handlers.ListByCategory).Methods("GET")
