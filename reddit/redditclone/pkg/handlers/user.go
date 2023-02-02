@@ -27,7 +27,7 @@ func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sess, _ := h.Sessions.Create(w, u.Id)
-	h.Logger.Infof("created session for %v", sess.UserID)
+	h.Logger.Infof("created session for %v", sess.Username)
 	http.Redirect(w, r, "/", 302)
 }
 
@@ -43,6 +43,6 @@ func (h *UserHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sess, _ := h.Sessions.Create(w, u.Id)
-	h.Logger.Infof("created session for %v", sess.UserID)
+	h.Logger.Infof("created session for %v", sess.Username)
 	http.Redirect(w, r, "/", 302)
 }

@@ -8,17 +8,17 @@ import (
 )
 
 type Session struct {
-	ID     string
-	UserID uint32
+	ID       string
+	Username string
 }
 
-func NewSession(userId uint32) *Session {
+func NewSession(user string) *Session {
 	randId := make([]byte, 16)
 	rand.Read(randId)
 
 	return &Session{
-		ID:     fmt.Sprintf("%x", randId),
-		UserID: userId,
+		ID:       fmt.Sprintf("%x", randId),
+		Username: user,
 	}
 }
 

@@ -22,17 +22,17 @@ func (sm *SessionManager) Check(r *http.Request) (*Session, error) {
 	}
 
 	row := sm.DB.QueryRow("SELECT id, userid FROM sessions WHERE id = ?", sessionCookie.Value)
-	err = row.Scan(&sess.ID, &sess.UserID)
+	err = row.Scan(&sess.ID, &sess.Username)
 	if err == sql.ErrNoRows {
 		return nil, ErrNoAuth
 	}
 	return sess, nil
 }
 
-func (sm *SessionManager) Create(w http.ResponseWriter, userID uint32) (*Session, error) {
-	sess := NewSession(userID)
+func (sm *SessionManager) Create(w http.ResponseWriter, username string) (*Session, error) {
+	sess := NewSession(username)
 
-	_, err := sm.DB.Exec("INSERT INTO sessions ('id', 'userid') VALUES (?, ?)", sess.ID, sess.UserID)
+	_, err := sm.DB.Exec("INSERT INTO sessions ('id', 'username') VALUES (?, ?)", sess.ID, sess.Username)
 	if err != nil {
 		return nil, err
 	}

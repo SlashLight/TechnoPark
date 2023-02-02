@@ -1,7 +1,6 @@
 package items
 
 import (
-	"reddit/pkg/user"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -22,10 +21,10 @@ type Item struct {
 	Views            uint16        `bson:"views"`
 	Type             string        `bson:"type"`
 	Title            string        `bson:"title"`
-	Url              string        `bson:"url"`
-	Author           user.User     `bson:"author"`
+	Url              string        `bson:"url, omitempty"`
+	Author           *Author       `bson:"author"`
 	Category         string        `bson:"category"`
-	Text             string        `bson:"text"`
+	Text             string        `bson:"text, omitempty"`
 	Votes            []*Vote       `bson:"votes"`
 	Comments         []*Comment    `bson:"comments"`
 	Created          time.Time     `bson:"created"`
