@@ -60,14 +60,14 @@ func (repo *ItemMongoRepository) GetByCategory(categ string) ([]*Item, error) {
 	return items, nil
 }
 
-func (repo *ItemMongoRepository) GetByAuthor(authorLogin string) ([]*Item, error) {
+/*func (repo *ItemMongoRepository) GetByAuthor(authorLogin string) ([]*Item, error) {
 	items := []*Item{}
 	err := repo.Items.Find(bson.M{"author": author}).All(&items)
 	if err != nil {
 		return nil, err
 	}
 	return items, nil
-}
+} */
 
 func (repo *ItemMongoRepository) Upvote(id bson.ObjectId) (uint16, error) {
 	post := &Item{}
@@ -76,7 +76,7 @@ func (repo *ItemMongoRepository) Upvote(id bson.ObjectId) (uint16, error) {
 		return 0, err
 	}
 
-	newVote := &Vote{User: post.Author.Id, Vote: 1}
+	newVote := &Vote{User: post.Author.ID, Vote: 1}
 	post.Votes = append(post.Votes, newVote)
 	post.Score = post.Score + 1
 	post.UpvotePercentage = post.Score / uint16(len(post.Votes))
@@ -97,7 +97,7 @@ func (repo *ItemMongoRepository) Downvote(id bson.ObjectId) (uint16, error) {
 		return 0, err
 	}
 
-	newVote := &Vote{User: post.Author.Id, Vote: -1}
+	newVote := &Vote{User: post.Author.ID, Vote: -1}
 	post.Votes = append(post.Votes, newVote)
 	post.Score = post.Score - 1
 	post.UpvotePercentage = post.Score / uint16(len(post.Votes))
@@ -111,46 +111,44 @@ func (repo *ItemMongoRepository) Downvote(id bson.ObjectId) (uint16, error) {
 	return post.Score, nil
 }
 
-func (repo *ItemMongoRepository) Add(newItem *Item) (uint8, error) {
+func (repo *ItemMongoRepository) Add(newItem *Item) (bool, error) {
 	err := repo.Items.Insert(newItem)
 	if err != nil {
-		return 0, err
+		return false, err
 	}
-	return 1, nil
+	return true, nil
 }
 
-func (repo *ItemMongoRepository) Delete(id bson.ObjectId) (uint8, error) {
+func (repo *ItemMongoRepository) Delete(id bson.ObjectId) (bool, error) {
 	err := repo.Items.Remove(bson.M{"id": id})
 	if err == mgo.ErrNotFound {
-		return 0, nil
+		return false, nil
 	} else if err != nil {
-		return 0, err
+		return false, err
 	}
-	return 1, nil
+	return true, nil
 }
 
-func (repo *ItemMongoRepository) AddComment(postId bson.ObjectId, comment *Comment) (uint8, error) {
+func (repo *ItemMongoRepository) AddComment(postId bson.ObjectId, comment *Comment) (bool, error) {
 	post := &Item{}
 	err := repo.Items.Find(bson.M{"id": postId}).One(&post)
 	if err != nil {
-		return 0, err
+		return false, err
 	}
 
 	post.Comments = append(post.Comments, comment)
 	err = repo.Items.Update(bson.M{"id": postId}, &post)
-	if err == mgo.ErrNotFound {
-		return 0, nil
-	} else if err != nil {
-		return 0, err
+	if err != nil {
+		return false, err
 	}
-	return 1, nil
+	return true, nil
 }
 
-func (repo *ItemMongoRepository) DeleteComment(postId bson.ObjectId, commentId bson.ObjectId) (uint8, error) {
+func (repo *ItemMongoRepository) DeleteComment(postId bson.ObjectId, commentId bson.ObjectId) (bool, error) {
 	post := &Item{}
 	err := repo.Items.Find(bson.M{"id": postId}).One(&post)
 	if err != nil {
-		return 0, err
+		return false, err
 	}
 
 	ind := -1
@@ -163,15 +161,13 @@ func (repo *ItemMongoRepository) DeleteComment(postId bson.ObjectId, commentId b
 
 	if ind == -1 {
 		ErrWrongCom := errors.New("Invalid comment ID")
-		return 0, ErrWrongCom
+		return false, ErrWrongCom
 	}
 	post.Comments = append(post.Comments[:ind], post.Comments[ind+1:]...)
 
 	err = repo.Items.Update(bson.M{"id": postId}, &post)
-	if err == mgo.ErrNotFound {
-		return 0, nil
-	} else if err != nil {
-		return 0, err
+	if err != nil {
+		return false, err
 	}
-	return 1, nil
+	return true, nil
 }

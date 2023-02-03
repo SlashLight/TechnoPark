@@ -1,7 +1,9 @@
 package user
 
+import "gopkg.in/mgo.v2/bson"
+
 type User struct {
-	Id       uint32
+	Id       bson.ObjectId
 	Login    string
 	password string
 }

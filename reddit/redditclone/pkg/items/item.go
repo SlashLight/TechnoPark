@@ -7,7 +7,7 @@ import (
 )
 
 type Vote struct {
-	User uint32
+	User bson.ObjectId
 	Vote int8
 }
 
@@ -20,11 +20,11 @@ type Item struct {
 	Score            uint16        `bson:"score"`
 	Views            uint16        `bson:"views"`
 	Type             string        `bson:"type"`
-	Title            string        `bson:"title"`
-	Url              string        `bson:"url, omitempty"`
+	Title            string        `bson:"title" schema:"title"`
+	Url              string        `bson:"url, omitempty" schema:"url"`
 	Author           *Author       `bson:"author"`
-	Category         string        `bson:"category"`
-	Text             string        `bson:"text, omitempty"`
+	Category         string        `bson:"category" schema:"category"`
+	Text             string        `bson:"text, omitempty" schema:"text"`
 	Votes            []*Vote       `bson:"votes"`
 	Comments         []*Comment    `bson:"comments"`
 	Created          time.Time     `bson:"created"`
@@ -39,9 +39,9 @@ type ItemRepo interface {
 	GetByAuthor(string) ([]*Item, error)
 	Upvote(bson.ObjectId) (uint16, error)
 	Downvote(bson.ObjectId) (uint16, error)
-	Add(*Item) (uint8, error)
-	Delete(bson.ObjectId) (uint8, error)
+	Add(*Item) (bool, error)
+	Delete(bson.ObjectId) (bool, error)
 
-	AddComment(bson.ObjectId, *Comment) (uint8, error)
-	DeleteComment(bson.ObjectId, bson.ObjectId) (uint8, error)
+	AddComment(bson.ObjectId, *Comment) (bool, error)
+	DeleteComment(postId bson.ObjectId, commentId bson.ObjectId) (bool, error)
 }

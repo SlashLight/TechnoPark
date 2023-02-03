@@ -3,6 +3,7 @@ package user
 import (
 	"database/sql"
 	"errors"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type UserSqlRepo struct {
@@ -46,21 +47,18 @@ func (repo *UserSqlRepo) Register(login, password, confirmation string) (*User, 
 		return nil, ErrUserExists
 	}
 
-	result, err := repo.DB.Exec("INSERT  INTO users (`login`, `password`) VALUES (?, ?)",
+	userID := bson.NewObjectId()
+	_, err = repo.DB.Exec("INSERT  INTO users (`login`, `password`, `id`) VALUES (?, ?, ?)",
 		login,
 		password,
+		userID,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	lastID, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
 	user := &User{
-		Id:       uint32(lastID),
+		Id:       userID,
 		Login:    login,
 		password: password,
 	}

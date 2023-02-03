@@ -2,13 +2,12 @@ package items
 
 import (
 	"gopkg.in/mgo.v2/bson"
-	"reddit/pkg/user"
 	"time"
 )
 
 type Comment struct {
 	Created time.Time
-	Author  user.User
+	Author  Author
 	Body    string
 	ID      bson.ObjectId
 }

@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gopkg.in/mgo.v2/bson"
 	"math/rand"
 )
 
 type Session struct {
 	ID       string
 	Username string
+	UserID   bson.ObjectId
 }
 
 func NewSession(user string) *Session {
@@ -19,6 +21,7 @@ func NewSession(user string) *Session {
 	return &Session{
 		ID:       fmt.Sprintf("%x", randId),
 		Username: user,
+		UserID:   bson.NewObjectId(),
 	}
 }
 

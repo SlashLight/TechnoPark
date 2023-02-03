@@ -21,8 +21,8 @@ func (sm *SessionManager) Check(r *http.Request) (*Session, error) {
 		return nil, ErrNoAuth
 	}
 
-	row := sm.DB.QueryRow("SELECT id, userid FROM sessions WHERE id = ?", sessionCookie.Value)
-	err = row.Scan(&sess.ID, &sess.Username)
+	row := sm.DB.QueryRow("SELECT id, username, userid FROM sessions WHERE id = ?", sessionCookie.Value)
+	err = row.Scan(&sess.ID, &sess.Username, &sess.UserID)
 	if err == sql.ErrNoRows {
 		return nil, ErrNoAuth
 	}
@@ -32,7 +32,7 @@ func (sm *SessionManager) Check(r *http.Request) (*Session, error) {
 func (sm *SessionManager) Create(w http.ResponseWriter, username string) (*Session, error) {
 	sess := NewSession(username)
 
-	_, err := sm.DB.Exec("INSERT INTO sessions ('id', 'username') VALUES (?, ?)", sess.ID, sess.Username)
+	_, err := sm.DB.Exec("INSERT INTO sessions ('id', 'username', 'userid') VALUES (?, ?, ?)", sess.ID, sess.Username, sess.UserID)
 	if err != nil {
 		return nil, err
 	}
