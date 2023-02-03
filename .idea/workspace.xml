@@ -6,14 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="308c888e-2aa3-44ba-bf1a-4b5ca3a6beb4" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/handlers/items.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/handlers/items.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/items/comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/items/comment.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/items/item.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/items/item.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/items/repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/items/repo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/session/manager.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/session/manager.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/session/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/session/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/user/repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/user/repo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/user/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/user/user.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +25,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2KxpWiDFvGUIP4PUQKK8oWJ0QrL" />
   <component name="ProjectViewState">

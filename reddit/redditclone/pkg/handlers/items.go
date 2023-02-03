@@ -27,7 +27,16 @@ func (h *ItemsHandler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//EXECUTE TEMPLATE
+	err = h.Tmpl.ExecuteTemplate(w, "index.html", struct {
+		Items []*items.Item
+	}{
+		Items: elems,
+	})
+	if err != nil {
+		h.Logger.Error("ExecuteTemplate err", err)
+		http.Error(w, `Template error`, http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *ItemsHandler) ListByCategory(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +53,16 @@ func (h *ItemsHandler) ListByCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//EXECUTE TEMPLATE
+	err = h.Tmpl.ExecuteTemplate(w, "index.html", struct {
+		Items []*items.Item
+	}{
+		Items: elems,
+	})
+	if err != nil {
+		h.Logger.Error("ExecuteTemplate err", err)
+		http.Error(w, `Template error`, http.StatusInternalServerError)
+		return
+	}
 }
 
 /*func (h *ItemsHandler) ListByAuthor(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +125,16 @@ func (h *ItemsHandler) PostByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TEMPLATE
+	err = h.Tmpl.ExecuteTemplate(w, "index.html", struct {
+		Post *items.Item
+	}{
+		Post: item,
+	})
+	if err != nil {
+		h.Logger.Error("ExecuteTemplate err", err)
+		http.Error(w, `Template error`, http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *ItemsHandler) AddComment(w http.ResponseWriter, r *http.Request) {
