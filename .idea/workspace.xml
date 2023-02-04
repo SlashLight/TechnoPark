@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="308c888e-2aa3-44ba-bf1a-4b5ca3a6beb4" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/handlers/items.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/handlers/items.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reddit/redditclone/pkg/items/item.go" beforeDir="false" afterPath="$PROJECT_DIR$/reddit/redditclone/pkg/items/item.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

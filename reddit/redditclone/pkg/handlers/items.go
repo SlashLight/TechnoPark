@@ -27,16 +27,9 @@ func (h *ItemsHandler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "index.html", struct {
-		Items []*items.Item
-	}{
-		Items: elems,
-	})
-	if err != nil {
-		h.Logger.Error("ExecuteTemplate err", err)
-		http.Error(w, `Template error`, http.StatusInternalServerError)
-		return
-	}
+	w.Header().Set("Content-type", "application/json")
+	respJSON, _ := json.Marshal(elems)
+	w.Write(respJSON)
 }
 
 func (h *ItemsHandler) ListByCategory(w http.ResponseWriter, r *http.Request) {
@@ -53,16 +46,9 @@ func (h *ItemsHandler) ListByCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "index.html", struct {
-		Items []*items.Item
-	}{
-		Items: elems,
-	})
-	if err != nil {
-		h.Logger.Error("ExecuteTemplate err", err)
-		http.Error(w, `Template error`, http.StatusInternalServerError)
-		return
-	}
+	w.Header().Set("Content-type", "application/json")
+	respJSON, _ := json.Marshal(elems)
+	w.Write(respJSON)
 }
 
 /*func (h *ItemsHandler) ListByAuthor(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +92,9 @@ func (h *ItemsHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.Logger.Infof("Insert post: %v", inserted)
-	http.Redirect(w, r, "/", http.StatusFound)
+	w.Header().Set("Content-type", "application/json")
+	respJSON, _ := json.Marshal(item)
+	w.Write(respJSON)
 }
 
 func (h *ItemsHandler) PostByID(w http.ResponseWriter, r *http.Request) {
@@ -125,16 +113,9 @@ func (h *ItemsHandler) PostByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "index.html", struct {
-		Post *items.Item
-	}{
-		Post: item,
-	})
-	if err != nil {
-		h.Logger.Error("ExecuteTemplate err", err)
-		http.Error(w, `Template error`, http.StatusInternalServerError)
-		return
-	}
+	w.Header().Set("Content-type", "application/json")
+	respJSON, _ := json.Marshal(item)
+	w.Write(respJSON)
 }
 
 func (h *ItemsHandler) AddComment(w http.ResponseWriter, r *http.Request) {
@@ -167,6 +148,11 @@ func (h *ItemsHandler) AddComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.Logger.Infof("insert comment: %v", inserted)
+
+	newPost, _ := h.ItemsRepo.GetByID(postID)
+	w.Header().Set("Content-type", "application/json")
+	respJSON, _ := json.Marshal(newPost)
+	w.Write(respJSON)
 }
 
 func (h *ItemsHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
@@ -194,10 +180,9 @@ func (h *ItemsHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	newPost, _ := h.ItemsRepo.GetByID(postID)
 	w.Header().Set("Content-type", "application/json")
-	respJSON, _ := json.Marshal(map[string]bool{
-		"success": ok,
-	})
+	respJSON, _ := json.Marshal(newPost)
 	w.Write(respJSON)
 }
 
@@ -221,8 +206,8 @@ func (h *ItemsHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-type", "application/json")
-	respJSON, _ := json.Marshal(map[string]bool{
-		"success": ok,
+	respJSON, _ := json.Marshal(map[string]string{
+		"message": "success",
 	})
 	w.Write(respJSON)
 }
@@ -243,6 +228,11 @@ func (h *ItemsHandler) Upvote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.Logger.Infof("new post rating: %v", score)
+
+	newPost, _ := h.ItemsRepo.GetByID(postID)
+	w.Header().Set("Content-type", "application/json")
+	respJSON, _ := json.Marshal(newPost)
+	w.Write(respJSON)
 }
 
 func (h *ItemsHandler) Downvote(w http.ResponseWriter, r *http.Request) {
@@ -261,4 +251,9 @@ func (h *ItemsHandler) Downvote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.Logger.Infof("new post rating: %v", score)
+
+	newPost, _ := h.ItemsRepo.GetByID(postID)
+	w.Header().Set("Content-type", "application/json")
+	respJSON, _ := json.Marshal(newPost)
+	w.Write(respJSON)
 }

@@ -17,19 +17,19 @@ type Author struct {
 }
 
 type Item struct {
-	Score            uint16        `bson:"score"`
-	Views            uint16        `bson:"views"`
-	Type             string        `bson:"type"`
-	Title            string        `bson:"title" schema:"title"`
-	Url              string        `bson:"url, omitempty" schema:"url"`
-	Author           *Author       `bson:"author"`
-	Category         string        `bson:"category" schema:"category"`
-	Text             string        `bson:"text, omitempty" schema:"text"`
-	Votes            []*Vote       `bson:"votes"`
-	Comments         []*Comment    `bson:"comments"`
-	Created          time.Time     `bson:"created"`
-	UpvotePercentage uint16        `bson:"upvotePercentage"`
-	ID               bson.ObjectId `bson:"ID"`
+	Score            uint16        `json:"score" bson:"score"`
+	Views            uint16        `json:"views" bson:"views"`
+	Type             string        `json:"type" bson:"type"`
+	Title            string        `json:"title" schema:"title" bson:"title"`
+	Url              string        `json:"url, omitempty" schema:"url" bson:"url, omitempty"`
+	Author           *Author       `json:"author" bson:"author"`
+	Category         string        `json:"category" schema:"category" bson:"category"`
+	Text             string        `json:"text, omitempty" schema:"text" bson:"text, omitempty"`
+	Votes            []*Vote       `json:"votes" bson:"votes"`
+	Comments         []*Comment    `json:"comments" bson:"comments"`
+	Created          time.Time     `json:"created" bson:"created"`
+	UpvotePercentage uint16        `json:"upvotePercentage" bson:"upvotePercentage"`
+	ID               bson.ObjectId `json:"id" bson:"id"`
 }
 
 type ItemRepo interface {
